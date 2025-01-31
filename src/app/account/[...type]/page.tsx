@@ -41,7 +41,6 @@ const page = async({ params }: any) => {
     // }
   };
 
-  // const data1 = await fetchFromServer(api1);
   const api2: any = {
     url: `https://magshopify.goaideme.com/card/card-listing`,
     method: "GET",
