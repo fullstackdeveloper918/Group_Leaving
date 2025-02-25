@@ -36,6 +36,7 @@
     "paytm-sdk": "^0.0.2",
     "paytmchecksum": "^1.5.1",
     "polotno": "^2.14.1",
+    "quill": "^2.0.3",
     "razorpay": "^2.9.4",
     "react": "^18",
     "react-dom": "^18",
