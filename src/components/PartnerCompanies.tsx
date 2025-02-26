@@ -1,153 +1,102 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import RazorPay from "./RazorPay";
-import { useAccessToken } from "@/app/context/AccessTokenContext";
-import { parseCookies } from "nookies";
-import { useRouter } from "next/navigation";
-import { Router } from "next/router";
-import { toast, ToastContainer } from "react-toastify";
-import Cookies from "js-cookie";
-
-const PlanBunddlePage = ({ data2 }: any) => {
-  const router = useRouter(); 
-  const [voucher, setVaoucher] = useState<any>("");
-   const [voucherDiscount, setVaoucherDiscount] = useState<any>(""); 
-  const onChange = (e: any) => {
-    setVaoucher(e);
+"use client"
+import React from 'react'
+import Images from "../assets/images/logo_1.png"
+import Images1 from "../assets/images/logo_2.png"
+import Images2 from "../assets/images/logo_3.png"
+import Images3 from "../assets/images/logo_4.png"
+import Images4 from "../assets/images/logo_5.png"
+import Slider from "react-slick";
+const PartnerCompanies = () => {
+  const settings = {
+    // dots: true,
+    infinite: true,
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    autoplay: true,
+    speed: 5000,
+    autoplaySpeed: 5000,
+    cssEase: "linear",               
+    pauseOnHover: true
   };
-     const gettoken = Cookies.get("auth_token");   
-
-     const TotalAmount = (data2.data[0].sale_price - voucherDiscount).toFixed(2);
-  console.log(TotalAmount, "TotalAmount");
-
-  const { accessToken, setAccessToken } = useAccessToken();
-  useEffect(() => {
-    const cookies = parseCookies();
-    console.log(cookies, "cookies");
-    const token = cookies.auth_token;
-    console.log(typeof token, "iooioio");
-    if (token) {
-      setAccessToken(token);
-    } else {
-      // alert("nothing")
-    }
-  }, []);
-  console.log(accessToken, "accessToken");
-
-
-   const handleApplyDiscount = async() => {
-  
-        console.log("object")
-        // setVaoucher1(voucher);
-        try {
-           const requestData = {
-            code: voucher,
-            card_price:data2?.data[0]?.sale_price
-                // full_name:name,
-                // additional_invoice:invoiceDetails
-              };
-              
-              let res = await fetch('https://magshopify.goaideme.com/discount/is-voucher-valid', {
-                method: 'POST', // Method set to POST
-                headers: {
-                  'Content-Type': 'application/json', // Indicates that you're sending JSON
-                   'Authorization': `Bearer ${gettoken}` // Send the token in the Authorization header
-                },
-                body: JSON.stringify(requestData) // Stringify the data you want to send in the body
-              });
-              
-              // Parse the response JSON
-              let posts = await res.json();
-              console.log(posts,"jklklkj");
-              const numberValue = parseFloat(posts?.data.replace(/[^0-9.]/g, "")); 
-              setVaoucherDiscount(numberValue)
-              // console.log("voucher discount", voucherDiscount);
-              if(res.status===200){
-                toast.success("Voucher Added Suceesfully", {autoClose:2000})
-              }else if(posts?.statusCode === 401){
-                Cookies.remove("auth_token");
-                router.replace("/login");
-                window.location.reload();
-              }
-        } catch (error:any) {
-          toast.error("Voucher is not found", {autoClose:3000});
-        }
-      }; 
-
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-center bg-lightBg">
-      <ToastContainer />
-      <div className="bg-white p-6 rounded-[20px] hover:shadow-lg transition-all  border border-[#e5e7eb] flex flex-col justify-between h-full">
-        <h1 className="text-center text-2xl font-bold mb-4">
-          {data2.data[0].number_of_cards} Cards Bundle
-        </h1>
-
-        <div className="bg-gray-50 p-5 rounded-lg border border-gray-200">
-          <h2 className="text-lg font-semibold mb-4">Your Bundle</h2>
-
-          <div className="flex items-center mb-4">
-            <div className="w-12 h-12 bg-pink-200 flex items-center justify-center rounded-full">
-              {/* Use an image or icon here */}
-              <img
-                className="w-20 h-10"
-                //   style={{objectFit:"cover"}}
-                src="https://groupleavingcards.com/images/team.png"
-                alt="Icon"
-              />
-            </div>
-            <div className="ml-4">
-              <h3 className="text-base font-semibold">
-                {data2.data[0].number_of_cards} Cards Bundle
-              </h3>
-              <p className="text-sm text-gray-500">
-                {data2.data[0].number_of_cards} cards
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center mb-4">
-            <input
-              type="text"
-              placeholder="Voucher Code"
-              className="border border-gray-300 rounded-md px-4 py-2 w-full"
-              onChange={(e: any) => onChange(e.target.value)}
-              value={voucher}
-            />
-            <button
-              onClick={handleApplyDiscount}
-              className="ml-2 text-blue-600 font-semibold"
-            >
-              Apply
-            </button>
-          </div>
-
-          <div className="border-t border-gray-300 pt-4">
-            <div className="flex justify-between text-sm mb-2">
-              <span>Bundle Price</span>
-              <span>{TotalAmount} INR</span>
-            </div>
-            <div className="flex justify-between text-sm mb-2">
-              <span>Tax</span>
-              <span>0.00 INR</span>
-            </div>
-            <div className="flex justify-between text-base font-bold">
-              <span>Total</span>
-              <span>{TotalAmount} INR</span>
-            </div>
-          </div>
-        </div>
-        <div className="p-2">
-          {accessToken ? (
-            <RazorPay amount={TotalAmount} type={"bundle"} />
-          ) : (
-            <button type="button" className="mt-6 bg-blue-600 text-blueText w-full py-2 rounded-xl border-2 border-[blueText] hover:bg-blue-700" onClick={()=> router.replace('/login') }>
-              Pay Now :${TotalAmount} INR{" "}
-            </button>
-          )}
-        </div>
+    <>
+    <section className="flex flex-col items-center justify-center py-8 bg-white slider_Section">
+    <h2 className="text-center text-lg mb-0 xl:text-xl font-semibold text-gray-600">Trusted by Over Seven Million Users</h2>
+    <h3 className="mt-2 text-2xl  xl:text-3xl font-bold text-center text-gray-900">
+    Virtual Cards for Individuals & Businesses
+      {/* Join over <span className="font-bold">5,000,000</span> other people using our group greeting cards */}
+    </h3>
+    {/* <div className="flex items-center justify-between md:space-x-8 space-x-0 mt-6 partner_logos">
+      <img
+        src={Images.src}
+        alt="Airbnb Logo"
+        style={{width:"15"}}
+        className="h-15 w-auto"
+      />
+      <img
+          src={Images1.src}
+        alt="Harris Logo"
+        className="h-15 w-auto"
+      />
+      <img
+       src={Images2.src}
+        alt="Scotiabank Logo"
+        className="h-15 w-auto"
+      />
+      <img
+      src={Images3.src}
+        alt="Toronto Pearson Logo"
+        className="h-15 w-auto"
+      />
+      <img
+       src={Images4.src}
+        alt="Accenture Logo"
+        className="h-15 w-auto"
+      />
+    </div>  */}
+  </section>
+    <div className="slider-containe">
+    <Slider {...settings}>
+      <div>
+      <img
+        src={Images.src}
+        alt="Airbnb Logo"
+        // style={{width:"20"}}
+        className="h-15 w-auto"
+      />
       </div>
-    </div>
-  );
-};
+      <div>
+      <img
+          src={Images1.src}
+        alt="Harris Logo"
+        className="h-15 w-auto"
+      />
+      </div>
+      <div>
+      <img
+      src={Images3.src}
+        alt="Toronto Pearson Logo"
+        className="h-15 w-auto"
+      />
+      </div>
+      <div>
+      <img
+       src={Images2.src}
+        alt="Scotiabank Logo"
+        className="h-15 w-auto"
+      />
+      </div>
+      <div>
+      <img
+       src={Images4.src}
+        alt="Accenture Logo"
+        className="h-15 w-auto"
+      />
+      </div>
+    </Slider>
+  </div>
+    </>
+  )
+}
 
-export default PlanBunddlePage;
+export default PartnerCompanies
