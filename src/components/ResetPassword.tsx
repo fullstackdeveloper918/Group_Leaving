@@ -29,7 +29,7 @@ const ResetPassword = () => {
       // console.log(data, "responseResetPassword");
 // toast.success(data.message)
       if (data?.status === 200 && data?.message) {
-        toast.success(data?.message);
+        toast.success(data?.message, {autoClose:2000});
         setTimeout(() => {
           router.push("/login");
         }, 2000);

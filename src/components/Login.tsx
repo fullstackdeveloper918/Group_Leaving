@@ -14,6 +14,7 @@ import GooglePayButton from "./common/GooglePayButton";
 import { toast, ToastContainer } from "react-toastify";
 import { useAccessToken } from "@/app/context/AccessTokenContext";
 import Link from "next/link";
+import Cookies from "js-cookie";
 const { Row, Col, Button } = {
   Row: dynamic(() => import("antd").then((module) => module.Row), {
     ssr: false,
@@ -30,53 +31,55 @@ const Login = () => {
   const [loading,setLoading]=useState(false)
   // const [correctPass, setCorrectPass] = useState(false);
   const { accessToken, setAccessToken } = useAccessToken();
-  const setCookie = (name: string, value: string, days: number) => {
-    const expires = new Date();
-    expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+  const setCookie = (name: string, value: string) => {
+    // const expires = new Date();
+    // expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+    // document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
   };
 
-  const createSessionCookie = (idToken: string) => {
-    try {
-      setCookie("auth_token", idToken, 30); // 30 days
-    } catch (error) {
-    }
-  };
+  // const createSessionCookie = (idToken: string) => {
+  //   try {
+  //     setCookie("auth_token", idToken); // 30 days
+  //   } catch (error) {
+  //   }
+  // };
   const createSessionCookie2 = (idToken: string) => {
     try {
-      setCookie("COOKIES_USER_ACCESS_TOKEN", idToken, 30); // 30 days
+      setCookie("COOKIES_USER_ACCESS_TOKEN", idToken); // 30 days
     } catch (error) {
     }
   };
   const createSessionCookie1 = (idToken: string) => {
     try {
-      setCookie("userInfo", idToken, 30); // 30 days
+      setCookie("userToken", idToken); // 30 days
     } catch (error) {
     }
   };
 
-  const onFinish = async (values: any) => {
-    let items = {
-      full_name: capFirst(values?.full_name),
-      email: String(values.email).toLowerCase(),
-      password: values.password,
-    };
-    let res = await api.Auth.login(items);
-    console.log(res, "yuyyyu");
+  // const onFinish = async (values: any) => {
+  //   let items = {
+  //     full_name: capFirst(values?.full_name),
+  //     email: String(values.email).toLowerCase(),
+  //     password: values.password,
+  //   };
+  //   let res = await api.Auth.login(items);
+  //   console.log(res, "yuyyyu");
     
-    // if (res.token) {
-      // }
-      // setCookie(null, "token","yewiryt46836483456ojtkshrti6w48werkweyrt86448", {
-      //   maxAge: 30 * 24 * 60 * 60,
-      //   path: "/",
-      // });
+  //   // if (res.token) {
+  //     // }
+  //     // setCookie(null, "token","yewiryt46836483456ojtkshrti6w48werkweyrt86448", {
+  //     //   maxAge: 30 * 24 * 60 * 60,
+  //     //   path: "/",
+  //     // });
 
-    console.log(res, "rereere");
-    router.replace("/");
+  //   console.log(res, "rereere");
+  //   router.replace("/");
 
-    try {
-    } catch (error: any) {}
-  };
+  //   try {
+  //   } catch (error: any) {}
+  // };
+  
+  
   const onFinish1 = async (values: any) => {
     let items = {
       // full_name: capFirst(values?.full_name),
@@ -87,29 +90,24 @@ const Login = () => {
     try {
       setLoading(true)
       const res=await api.Auth.login(items)
-      console.log(res,"reerrer");
+      console.log(res.data,"reerrer");
+      // Cookies.set("auth_token", res?.token, { sameSite: "None", secure: true });
+      // Cookies.set("user_infos", res?.data);
       if(res?.data){
-        toast.success("Login Successfully")
+        toast.success("Login Successfully", {autoClose:1000})
         router.replace("/");
       }
 
       api.setToken(JSON.stringify(res?.token))
       setAccessToken(JSON.stringify(res?.token));
-      createSessionCookie(JSON.stringify(res?.token));
+      // createSessionCookie(JSON.stringify(res?.token));
       createSessionCookie2(JSON.stringify(res?.token));
       createSessionCookie1(JSON.stringify(res?.data));
       if (res?.token) {
+        Cookies.set("auth_token", res?.token, { sameSite: "None", secure: true });
         localStorage.setItem("access_token", JSON.stringify(res?.token)); // Store the token in localStorage
       }
-      // setCookie(null, "userInfo", JSON.stringify(res?.data), {
-      //   maxAge: 30 * 24 * 60 * 60, // 30 days
-      //   path: "/",
-      // });
-      // setCookie(null, "auth_token",res?.token, {
-      //   maxAge: 30 * 24 * 60 * 60,
-      //   path: "/",
-      // });
-      router.replace("/");
+      // router.replace("/");
     } catch (error: any) {
       console.log(error?.response?.body?.message,"werwer");
       setLoading(false)

@@ -64,7 +64,7 @@ const gettoken = Cookies.get("auth_token");
       }
 
       const data = await response.json(); // Assuming the response returns JSON
-      toast.success(!isLocked ? "Unlock Successfully" : "Lock Successfully");
+      toast.success(!isLocked ? "Unlock Successfully" : "Lock Successfully" , {autoClose:1000});
       console.log(data, "sadfdgsfdg");
       setIsLocked(!isLocked);
       setButtonText(isLocked ? "Unlock Collection" : "Lock Collection");
@@ -88,18 +88,20 @@ const gettoken = Cookies.get("auth_token");
       });
 
       if (response.ok) {
-        toast.success("Gift sent successfully!");
+        toast.success("Gift sent successfully!", {autoClose:1000});
       } else {
-        toast.error("Please make sure the recipient email is valid and try again.")
+        toast.error("Please make sure the recipient email is valid and try again.", {autoClose:2000})
       }
     // toast.success(response.data)
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Please make sure the recipient email is valid and try again.")
+      toast.error("Please make sure the recipient email is valid and try again.", {autoClose:2000})
     //   alert("An error occurred. Please try again.");
     }
   };
 
+
+  console.log("paramsid",params.id)
 
   // console.log(editCollection,"editCollection11");
 

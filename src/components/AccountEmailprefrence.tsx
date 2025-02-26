@@ -52,12 +52,13 @@ const AccountEmailprefrence = ({ userInfo, data }: any) => {
       // console.log(posts.message, "sds");
       if(posts?.status === 200){
         // console.log(posts.status, "sds");
-        toast.success(posts?.message);
+        toast.success(posts?.message, {autoClose:2000});
         // toast.success("Preferences Updated Successfully");
       }else if(posts?.statusCode === 401 && posts?.message === "Token is expire"){
         Cookies.remove("auth_token");
         Cookies.remove("COOKIES_USER_ACCESS_TOKEN");
         router.replace("/login");
+        window.location.reload();
       }
     } catch (error) {
          

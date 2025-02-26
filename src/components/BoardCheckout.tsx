@@ -124,14 +124,15 @@ const BoardCheckout = ({data}:any) => {
                   setVaoucherDiscount(numberValue)
                   // console.log("voucher discount", voucherDiscount);
                   if(res.status===200){
-                    toast.success("Voucher Added Suceesfully")
+                    toast.success("Voucher Added Suceesfully", {autoClose:2000})
                   }
                   else if(posts?.statusCode === 401){
                     Cookies.remove("auth_token");
-                    router.push("/login");
+                    router.replace("/login");
+                    window.location.reload();
                   }
             } catch (error:any) {
-              toast.error("Voucher is not found")
+              toast.error("Voucher is not found", {autoClose:3000})
             }
           }; 
 
@@ -206,7 +207,7 @@ const BoardCheckout = ({data}:any) => {
                   />
                   <span className="text-lg">Board Bundle</span>
                   <span className="ml-auto text-green-500">
-                    From ${data?.data[0].sale_price} USD
+                    From ${data?.data[0].sale_price.toFixed(2)} USD
                     {/* From $22.45 USD */}
                   </span>
                 </label>

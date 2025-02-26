@@ -7,7 +7,7 @@ import checkSvg from "../../assets/images/check.svg";
 import api from "@/utils/api";
 import { cookies } from "next/dist/client/components/headers";
 import { toast, ToastContainer } from "react-toastify";
-import nookies, { parseCookies } from "nookies";
+import nookies, { parseCookies , destroyCookie } from "nookies";
 import { useAccessToken } from "@/app/context/AccessTokenContext";
 const MultiStepForm = ({ params }: any) => {
   const router = useRouter();
@@ -35,7 +35,7 @@ const MultiStepForm = ({ params }: any) => {
   useEffect(() => {
     const cookies = document.cookie.split("; ");
     const userInfoCookie = cookies.find((cookie) =>
-      cookie.startsWith("userInfo=")
+      cookie.startsWith("user_info=")
     );
 
     if (userInfoCookie) {
@@ -196,6 +196,11 @@ const MultiStepForm = ({ params }: any) => {
       if (response.status === 200) {
         toast.success("Cart Added Successfully");
       }
+
+      if(response.status === 400){
+        toast.error(data?.error,{autoClose:1000})
+        // router.push('/card/farewell')
+      }
       console.log("datamultistepform", data);
       // Optionally reset form values or error states
       // setError("");
@@ -203,7 +208,9 @@ const MultiStepForm = ({ params }: any) => {
 
       if (response.status === 401 && response.statusText === "Unauthorized") {
         toast.error("token is expire");
-        // router.replace('/login')
+        router.replace('/login')
+        destroyCookie(null, "auth_token");
+        window.location.reload();
         // cookies.remove("auth_token")
       }
 
@@ -385,6 +392,7 @@ const MultiStepForm = ({ params }: any) => {
                       <input
                         type="date"
                         value={selectedDate}
+                        min={new Date().toISOString().split("T")[0]}
                         onChange={(e) => setSelectedDate(e.target.value)}
                         className="ml-auto text-gray-500"
                         placeholder="Date"

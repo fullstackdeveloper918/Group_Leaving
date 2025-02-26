@@ -26,7 +26,7 @@ const ForgotPassword = ({searchParams}:any) => {
     
           if (response.ok) {
             // alert("Password reset email sent!");
-            toast.success("Password Changed successfull !")
+            toast.success("Password Changed successfull !", {autoClose:2000})
           } else {
             alert("Failed to send reset email. Please try again.");
           }

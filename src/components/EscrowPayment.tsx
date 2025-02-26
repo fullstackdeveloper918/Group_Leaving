@@ -2,6 +2,8 @@
 import React, { useEffect, useState } from "react";
 import Script from "next/script";
 import Cookies from "js-cookie";
+import { useRouter } from "next/navigation";
+import SuccessPage from "@/components/common/SuccessPage";
 
 declare global {
   interface Window {
@@ -9,36 +11,40 @@ declare global {
   }
 }
 
-const EscrowPayment = ({closeModal,brandKey,groupId}:any) => {
-  console.log(groupId,"groupId");
+const EscrowPayment = ({ closeModal, brandKey, groupId }: any) => {
+  console.log(groupId, "groupId");
 
-  const gettoken = Cookies.get("auth_token"); 
-  
+  const router = useRouter();
+
+  const gettoken = Cookies.get("auth_token");
+
   const AMOUNT = 0; // Amount in INR
   const [isProcessing, setIsProcessing] = useState(false);
   const [userInfo, setUserInfo] = useState<any>(null);
   const [uuid, setUuid] = useState<string | null>(null);
-  console.log(uuid,"uuid")
-    useEffect(() => {
-      const cookies = document.cookie.split('; ');
-      const userInfoCookie = cookies.find(cookie => cookie.startsWith('userInfo='));
-  
-      if (userInfoCookie) {
-        const cookieValue = userInfoCookie.split('=')[1];
-        try {
-          const parsedUserInfo = JSON.parse(decodeURIComponent(cookieValue));
-          setUserInfo(parsedUserInfo);
-          
-          // Extracting the UUID from the parsed userInfo object
-          if (parsedUserInfo && parsedUserInfo.uuid) {
-            setUuid(parsedUserInfo.uuid);
-            console.log('UUID:', parsedUserInfo.uuid);
-          }
-        } catch (error) {
-          console.error('Error parsing userInfo cookie', error);
+  console.log(uuid, "uuid");
+  useEffect(() => {
+    const cookies = document.cookie.split("; ");
+    const userInfoCookie = cookies.find((cookie) =>
+      cookie.startsWith("user_info=")
+    );
+
+    if (userInfoCookie) {
+      const cookieValue = userInfoCookie.split("=")[1];
+      try {
+        const parsedUserInfo = JSON.parse(decodeURIComponent(cookieValue));
+        setUserInfo(parsedUserInfo);
+
+        // Extracting the UUID from the parsed userInfo object
+        if (parsedUserInfo && parsedUserInfo.uuid) {
+          setUuid(parsedUserInfo.uuid);
+          console.log("UUID:", parsedUserInfo.uuid);
         }
+      } catch (error) {
+        console.error("Error parsing userInfo cookie", error);
       }
-    }, []);
+    }
+  }, []);
   const handlePayment = async () => {
     setIsProcessing(true);
     try {
@@ -46,10 +52,10 @@ const EscrowPayment = ({closeModal,brandKey,groupId}:any) => {
       const response = await fetch("/api/create", { method: "POST" });
       const data = await response.json();
 
-    //   if (data.error) {
-    //     console.error("Error from backend:", data.error);
-    //     return;
-    //   }
+      //   if (data.error) {
+      //     console.error("Error from backend:", data.error);
+      //     return;
+      //   }
 
       // Log the escrow hold amount and beneficiary account
       console.log("Escrow Hold Amount:", data.holdAmount); // Log hold amount
@@ -66,23 +72,24 @@ const EscrowPayment = ({closeModal,brandKey,groupId}:any) => {
         handler: function (response: any) {
           console.log("Payment successful", response);
           fetch(
-            'https://magshopify.goaideme.com/razorpay/save-payment',
+            "https://magshopify.goaideme.com/razorpay/save-payment",
             // 'https://magshopify.goaideme.com/razorpay/link-by-user-id',
             {
-              method: 'POST',
+              method: "POST",
               headers: {
-                'Content-Type': 'application/json',  
-                'Authorization': `Bearer ${gettoken}`
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${gettoken}`,
               },
               body: JSON.stringify({
                 payment_for: "group",
                 product_id: brandKey,
                 user_uuid: uuid,
-                collection_link:groupId,
+                collection_link: groupId,
                 paymentId: response.razorpay_payment_id,
               }),
             }
-          )
+          );
+          router.replace(`/payment/success`);
         },
         prefill: {
           name: "Abhay Singh",
@@ -97,7 +104,9 @@ const EscrowPayment = ({closeModal,brandKey,groupId}:any) => {
       // Initialize and open Razorpay Checkout
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
-      closeModal()
+      // console.log(rzp1,"rzp1paymentStatus")
+      closeModal();
+      
     } catch (error) {
       console.error("Payment failed", error);
     } finally {
@@ -107,7 +116,7 @@ const EscrowPayment = ({closeModal,brandKey,groupId}:any) => {
 
   return (
     <>
-   <Script src="https://checkout.razorpay.com/v1/checkout.js" />
+      <Script src="https://checkout.razorpay.com/v1/checkout.js" />
       {/* <button
         onClick={handlePayment}
         disabled={isProcessing}
@@ -115,15 +124,16 @@ const EscrowPayment = ({closeModal,brandKey,groupId}:any) => {
       >
         {isProcessing ? "Processing..." : `Escrow Pay Now: ${AMOUNT} INR`}
       </button> */}
-       <div className="text-center mb-4 justify-center">
-            {/* <p className="text-2xl font-bold">£{AMOUNT}</p> */}
-            <button  onClick={handlePayment}
-        disabled={isProcessing}
-         className="bg-blue-600 text-black  border-2 border-blue-700 px-4 py-2  rounded-md hover:bg-blue-700 transition">
-              {isProcessing ? "Processing..." : `Continue to Payment`}
-            </button>
-          </div>
-     
+      <div className="text-center mb-4 justify-center">
+        {/* <p className="text-2xl font-bold">£{AMOUNT}</p> */}
+        <button
+          onClick={handlePayment}
+          disabled={isProcessing}
+          className="bg-blue-600 text-black  border-2 border-blue-700 px-4 py-2  rounded-md hover:bg-blue-700 transition"
+        >
+          {isProcessing ? "Processing..." : `Continue to Payment`}
+        </button>
+      </div>
     </>
   );
 };

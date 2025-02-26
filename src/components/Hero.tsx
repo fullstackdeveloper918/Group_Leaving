@@ -11,6 +11,8 @@ import Slider from "react-slick";
 import React, { useEffect, useState } from "react";
 import cardData from "../constants/CardJson/card.json";
 import Link from "next/link";
+import Cookies from "js-cookie";
+import { toast, ToastContainer } from "react-toastify";
 const categoriesName = [
   "Farewell",
   "Birthday",
@@ -25,13 +27,37 @@ const categoriesName = [
   "Welcome",
   "New Home",
 ];
-const Hero = (props: any) => {
-  console.log(props, "props");
+const Hero = ({ token,userData, ...cardData }: { token?: any; userData?:any; data?: any[] }) => {
+  // console.log(userData, "props"); // ✅ Corrected console.log
 
+  console.log("tokendata",token)
+  const [isNewLogin, setIsNewLogin] = useState(false);
   const [displayedText, setDisplayedText] = useState("");
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
-  const [categoryName, setCategoryName] = useState(props?.data[0]);
+  const [categoryName, setCategoryName] = useState(cardData?.data?.[0] || ""); // ✅ Avoid undefined error
+
+
+
+
+  useEffect(() => {
+    const storedToken = Cookies.get("auth_token");
+
+    if (token && token !== storedToken) {
+      Cookies.set("auth_token", token);
+      Cookies.set("user_info",userData)
+      setIsNewLogin(true); 
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (isNewLogin) {
+      toast.success("Login Successfully!", { autoClose: 1000 });
+      setIsNewLogin(false); 
+    }
+  }, [isNewLogin]);
+
+ 
 
   useEffect(() => {
     const typeWriter = (text: string, index: number) => {
@@ -64,6 +90,7 @@ const Hero = (props: any) => {
   return (
     <>
       <section className="  dark:bg-gray-900   align-middle  homeBanner ">
+        <ToastContainer />
       <div className="slider-containe">
     <Slider {...settings}>
       {/********** slide 1 started  ***********/}

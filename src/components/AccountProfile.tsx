@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation';
 
 const AccountProfile = ({userInfo,data}:any) => {
   const router = useRouter();
-  const gettoken = Cookies.get("auth_token"); 
+  const gettoken = Cookies.get("auth_token");   
 
 console.log(data,"userInfoCookie");
 
@@ -30,13 +30,14 @@ console.log(data,"userInfoCookie");
     //      }
     //    }, []);
     //  console.log(accessToken,"accessToken");
-const [name, setName] = useState(data?.full_name);
-const [email, setEmail] = useState(data?.email);
-const [invoiceDetails, setInvoiceDetails] = useState(data?.additional_invoice);
+const [name, setName] = useState(data?.data?.full_name);
+const [email, setEmail] = useState(data?.data?.email);
+const [invoiceDetails, setInvoiceDetails] = useState(data?.data?.additional_invoice);
+
   const handleUpdate = async() => {
    try {
     const requestData = {
-      uuid: data?.uuid,
+      uuid: data?.data.uuid,
       full_name:name,
       additional_invoice:invoiceDetails
     };
@@ -52,14 +53,16 @@ const [invoiceDetails, setInvoiceDetails] = useState(data?.additional_invoice);
     
     // Parse the response JSON
     let posts = await res.json();
-    console.log(posts,"jklklkj");
+    // console.log(posts,"jklklkj");
     if(res.status===201){
-      toast.success("Profile Updated Suceesfully")
-      Cookies.set("userInfo", JSON.stringify(posts));
+      toast.success("Profile Updated Suceesfully", {autoClose:2000})
+      window.location.reload();
+      Cookies.set("updateuserInfo", JSON.stringify(posts));
     }else if(posts?.statusCode === 401){
       Cookies.remove("auth_token");
       Cookies.remove("COOKIES_USER_ACCESS_TOKEN");
-      router.push("/login");
+      router.replace("/login");
+      window.location.reload();
     }
    } catch (error) {
     
@@ -96,7 +99,7 @@ const [invoiceDetails, setInvoiceDetails] = useState(data?.additional_invoice);
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-
+ 
             <div>
               <label className="block text-sm font-medium text-gray-700">Email</label>
               <input
@@ -112,7 +115,7 @@ const [invoiceDetails, setInvoiceDetails] = useState(data?.additional_invoice);
             <div>
               <label className="block text-sm font-medium text-gray-700">Additional invoice details</label>
               <textarea
-                className="mt-1 px-2 py-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                className="mt-1 py-2 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 rows={3}
                 value={invoiceDetails||""}
                 onChange={(e) => setInvoiceDetails(e.target.value)}
@@ -131,7 +134,7 @@ const [invoiceDetails, setInvoiceDetails] = useState(data?.additional_invoice);
           <Link href="/reset-password" className="text-blue-500 hover:underline">Reset Password</Link>
         </div>
 
-        <div className="mt-8">
+        {/* <div className="mt-8">
           <h2 className="text-xl font-semibold mb-4">Social Logins</h2>
           <button className="flex items-center bg-gray-100 border border-gray-300 rounded px-4 py-2 shadow-sm">
             <img
@@ -141,7 +144,7 @@ const [invoiceDetails, setInvoiceDetails] = useState(data?.additional_invoice);
             />
             <span className="text-gray-700">Unlink Google</span>
           </button>
-        </div>
+        </div> */}
     </div>
   )
 }

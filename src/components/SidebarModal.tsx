@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import nookies from 'nookies';
 import Cookies from "js-cookie";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import { toast, ToastContainer } from "react-toastify";
 interface SidebarModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -29,12 +30,12 @@ const gettoken = Cookies.get("auth_token");
   useEffect(() => {
     // Get cookies on the client side
     const cookies = nookies.get(); // retrieves cookies from document.cookie
-    const userData = cookies.userInfo ? JSON.parse(cookies.userInfo) : null;
+    const userData = cookies.user_info ? JSON.parse(cookies.user_info) : null;
 
     setCookieValue(userData?.uuid  || null);
   }, []);
 
-
+console.log("cookie value",cookieValue)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -63,24 +64,28 @@ const gettoken = Cookies.get("auth_token");
       });
 
       if (response.ok) {
-        alert("Data saved successfully");
+        toast.success("Data saved successfully", {  autoClose: 1000, });
+        // alert("Data saved successfully");
         setClose(!isClose);
         // console.log("respoSidemodel",formData)
+        // console.log("respoSidemodelrs",response)
         //    setEditCollection((prev: any) => ({
         //   ...prev,
         //   data: formData, // Updating the nested `data` properly
         // }));
         onClose(); // Close the modal after successful submission
       } else {
-        alert("Failed to save data");
+        toast.error("Failed to save data", {autoClose:2000})
+        // alert("Failed to save data");
       }
     } catch (error) {
+      toast.error("An error occurred while saving the data.", {autoClose:2000});
       console.error("Error submitting form:", error);
-      alert("An error occurred while saving the data.");
+      // alert("An error occurred while saving the data.");
     }
   };
 
-  console.log("collectionTitle",collectionTitle)
+  console.log("collectionTitle",data)
 
   return (
     <div
@@ -110,7 +115,7 @@ const gettoken = Cookies.get("auth_token");
               <span className="text-gray-700">What is the title of your collection?</span>
               <input
                 type="text"
-                value={collectionTitle || data?.collection_title}
+                value={collectionTitle !== undefined ? collectionTitle : data?.collection_title || ""}
                 onChange={(e) => setCollectionTitle(e.target.value)}
                 placeholder="Collection Title"
                 className="mt-1 block w-full p-2 border border-gray-300 rounded"
@@ -120,7 +125,7 @@ const gettoken = Cookies.get("auth_token");
               <span className="text-gray-700">Who is the collection from? (optional)</span>
               <input
                 type="text"
-                value={senderName}
+                value={senderName !== undefined ? senderName : data?.sender_name || ""}
                 onChange={(e) => setSenderName(e.target.value)}
                 placeholder="Sender Name"
                 className="mt-1 block w-full p-2 border border-gray-300 rounded"
@@ -130,7 +135,7 @@ const gettoken = Cookies.get("auth_token");
               <span className="text-gray-700">Recipient Email</span>
               <input
                 type="email"
-                value={recipientEmail}
+                value={recipientEmail !== undefined ? recipientEmail : data?.recipient_email || ""}
                 onChange={(e) => setRecipientEmail(e.target.value)}
                 placeholder="Recipient Email"
                 className="mt-1 block w-full p-2 border border-gray-300 rounded"
@@ -171,6 +176,7 @@ const gettoken = Cookies.get("auth_token");
                       <input
                         type="date"
                         value={deliveryDate}
+                        min={new Date().toISOString().split("T")[0]}
                         onChange={(e) => setDeliveryDate(e.target.value)}
                         className="block w-full p-2 border border-gray-300 rounded"
                       />

@@ -503,8 +503,8 @@ const AllCardPricing = ({data,data2}:any) => {
              <img src={greeting_cards.src} alt="img" />  <span>{res?.number_of_cards} cards</span>
               </h2>
               <p className="text-center text-xl font-bold text-gray-800 mb-2 mb-0">
-                <span className="line-through text-[#707070] font-normal text-md">${res?.cost_price}</span>{" "}
-                ${res?.sale_price}
+                <span className="line-through text-[#707070] font-normal text-md">${res?.cost_price.toFixed(2)}</span>{" "}
+                ${res?.sale_price.toFixed(2)}
               </p>
               <p className="text-center text-green-600 saveAmount">Save {res?.discount}%</p>
               <p className="text-center text-gray-600 mt-2 mb-0">${res?.price} per card</p>

@@ -20,14 +20,20 @@ const RazorPay = ({ amount, type }: any) => {
   const router = useRouter();
   const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const param = useParams();
+  console.log(param,"param");
+
   const searchParams = useSearchParams();
+  console.log(type,"type");
+  
   const cartId = searchParams.get("cart_uuid"); // Correct way to extract cart_uuid
+  console.log("cartId",cartId)
   const [isProcessing, setIsProcessing] = useState(false);
 
   useEffect(() => {
     const cookies = nookies.get();
-    const userInfoFromCookie: UserInfo | null = cookies.userInfo
-      ? JSON.parse(cookies.userInfo)
+    console.log("cookiesUserInfo",cookies.user_info);
+    const userInfoFromCookie: UserInfo | null = cookies.user_info
+      ? JSON.parse(cookies.user_info)
       : null;
     setUserInfo(userInfoFromCookie);
   }, []);
@@ -55,6 +61,8 @@ const RazorPay = ({ amount, type }: any) => {
           
           const paymentId = response.razorpay_payment_id;
           const product_id = param.id;
+
+          console.log("product_id",product_id)
           
           try {
             const paymentResponse = await fetch("https://magshopify.goaideme.com/razorpay/save-payment", {
@@ -68,6 +76,7 @@ const RazorPay = ({ amount, type }: any) => {
                 user_uuid: userInfo?.uuid,
                 paymentId: paymentId,
                 payment_for: type,
+                collection_link:"sdfsrwr"
               }),
             });
             if (!paymentResponse.ok) {

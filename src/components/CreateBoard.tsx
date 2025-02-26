@@ -36,7 +36,7 @@ const CreateBoard = ({ data }: any) => {
   useEffect(() => {
     const cookies = document.cookie.split("; ");
     const userInfoCookie = cookies.find((cookie) =>
-      cookie.startsWith("userInfo=")
+      cookie.startsWith("user_info=")
     );
 
     if (userInfoCookie) {
@@ -142,11 +142,11 @@ const CreateBoard = ({ data }: any) => {
 
       const data = await response.json(); // Assumin    g the response returns JSON
       if (data.status === 200) {
-        toast.success("Added Successfully");
+        toast.success("Added Successfully", {autoClose:2000});
         router.replace(`/card/boardpay/${data?.data?.uuid}`);
       }
 
-      console.log(data, "    ");
+      console.log(data, "groupboard");
 
       // router.replace(`/card/boardpay/1`)
     } catch (error) {
@@ -249,7 +249,7 @@ const CreateBoard = ({ data }: any) => {
                   the card.
                 </p>
                 <button
-                  className="text-red-600 hover:text-red-800 font-medium"
+                  className="text-[#FF0000] hover:text-red-800 font-medium"
                   onClick={() => setAddSelectedImage(null)}
                 >
                   Remove Gift Card

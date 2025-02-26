@@ -5,22 +5,36 @@ import Images from "@/constants/images";
 import Image from "next/image";
 import api from "@/utils/api";
 import LogoutModal from "./LogoutModal";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { destroyCookie, parseCookies } from "nookies";
 // import GoodLuckCad from "../../assets/images/congratulations/good_luck.png"
 import GoodLuckCad from "../../assets/images/new_logo.png";
 import register from "../../assets/images/register.png";
 import { useAccessToken } from "@/app/context/AccessTokenContext";
+import Cookies from "js-cookie";
 
 
 const Navbar = () => {
   const router = useRouter();
+  const param = useParams()
+  console.log("paramsss",param)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const accessToken3 = useAccessToken();
-  console.log(accessToken3, "accessToken3");
-  const { accessToken, setAccessToken } = useAccessToken();
+  // const accessToken3 = useAccessToken();
+  // console.log(accessToken3, "accessToken3");
+  // const { accessToken, setAccessToken } = useAccessToken();
+  const [ accessToken, setAccessToken ] = useState<string | null>(null); 
+
+  
+
+  console.log("accessTokenn",accessToken)
+
+  useEffect(()=>{
+    const token :any = Cookies.get("auth_token");
+    setAccessToken(token)
+  },[param])
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 767);
@@ -38,7 +52,7 @@ const Navbar = () => {
   const handleLogout = async () => {
     // let res = await api.Auth.logout();
     // console.log(res, "qweqwe");
-    setAccessToken(null);
+    // setAccessToken(null);
     destroyCookie(null, "auth_token", { path: "/" });
     destroyCookie(null, "COOKIES_USER_ACCESS_TOKEN", { path: "/" });
     router.push(`/login`);
@@ -50,66 +64,66 @@ const Navbar = () => {
   };
   // const [state, setState] = useState<any>("");
   // const cookies = parseCookies();
-  const cookies = parseCookies();
+  // const cookies = parseCookies();
   // const accessToken = cookies.COOKIES_USER_ACCESS_TOKEN;
   // console.log(accessToken,"accessToken");
   // const [accessToken, setAccessToken] = useState<string | null>(null);
   // console.log(accessToken, "accessToken");
 
-  useEffect(() => {
-    const cookies = parseCookies();
-    console.log(cookies, "cookies");
+  // useEffect(() => {
+  //   const cookies = parseCookies();
+  //   console.log(cookies, "cookies");
 
-    const token = cookies.auth_token;
-    console.log(typeof token, "iooioio");
+  //   const token = cookies.auth_token;
+  //   console.log(typeof token, "iooioio");
 
-    if (token) {
-      setAccessToken(token);
-    } else {
-      // alert("nothing")
-    }
-  }, []);
+  //   if (token) {
+  //     setAccessToken(token);
+  //   } else {
+  //     // alert("nothing")
+  //   }
+  // }, []);
 
-  const [token, setToken] = useState<string | null>(null);
-  console.log(token, "tsdsdsdoken");
+  // const [token, setToken] = useState<string | null>(null);
+  // console.log(token, "tsdsdsdoken");
 
-  useEffect(() => {
-    // Retrieve token from localStorage when the component mounts
-    const tokenFromLocalStorage = localStorage.getItem("access_token");
+  // useEffect(() => {
+  //   // Retrieve token from localStorage when the component mounts
+  //   const tokenFromLocalStorage = localStorage.getItem("access_token");
 
-    if (tokenFromLocalStorage) {
-      setToken(tokenFromLocalStorage); // Set it to state if it exists
-    }
-  }, []);
-  const [state, setState] = useState<any>("");
-  console.log(state, "state");
+  //   if (tokenFromLocalStorage) {
+  //     setToken(tokenFromLocalStorage); // Set it to state if it exists
+  //   }
+  // }, []);
+  // const [state, setState] = useState<any>("");
+  // console.log(state, "state");
 
-  // const cookies = parseCookies();
+  // // const cookies = parseCookies();
 
-  // const accessToken = cookies.auth_token;
-  useEffect(() => {
-    const accessToken = cookies.auth_token;
-    setState(accessToken); // Set the token to state
-    // if(!cookies.auth_token){
-    //   window.location.reload();
-    // }
-  }, [cookies.auth_token]);
-  const getuserData = cookies.userInfo;
+  // // const accessToken = cookies.auth_token;
+  // useEffect(() => {
+  //   const accessToken = cookies.auth_token;
+  //   setState(accessToken); // Set the token to state
+  //   // if(!cookies.auth_token){
+  //   //   window.location.reload();
+  //   // }
+  // }, [cookies.auth_token]);
+  // const getuserData = cookies.userInfo;
 
-  if (getuserData) {
-    try {
-      const user_info = JSON.parse(getuserData);
-      console.log(user_info, "user_info");
+  // if (getuserData) {
+  //   try {
+  //     const user_info = JSON.parse(getuserData);
+  //     console.log(user_info, "user_info");
 
-      // Extracting the token from the user_info object
-      const token = user_info.token;
-      console.log("Token:", token);
-    } catch (error) {
-      console.error("Error parsing JSON:", error);
-    }
-  } else {
-    console.error("getuserData is undefined or null.");
-  }
+  //     // Extracting the token from the user_info object
+  //     const token = user_info.token;
+  //     console.log("Token:", token);
+  //   } catch (error) {
+  //     console.error("Error parsing JSON:", error);
+  //   }
+  // } else {
+  //   console.error("getuserData is undefined or null.");
+  // }
   // console.log(getuserData, "getuserData");
   // const userInfo=JSON.parse(getuserData);
   // const token1 = userInfo.token;
@@ -224,7 +238,7 @@ const Navbar = () => {
                   >
                     Fashion
                   </a> */}
-              {accessToken3.accessToken ? (
+              {accessToken ? (
                 <>
                   <Link
                     href="/account/cards"
@@ -287,7 +301,7 @@ const Navbar = () => {
                           className="dropdown-item"
                           onClick={() => setIsModalOpen(true)}
                         >
-                          Logout
+                          <span className="text-[#970119] font-semibold">Logout</span>
                         </button>
                       </li>
                     </ul>

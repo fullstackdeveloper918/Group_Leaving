@@ -23,11 +23,12 @@ console.log(addCard,"addcard");
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedImage(null);
+    setBrandKeys("")
   };
   useEffect(() => {
     const cookies = document.cookie.split("; ");
     const userInfoCookie = cookies.find((cookie) =>
-      cookie.startsWith("userInfo=")
+      cookie.startsWith("user_info=")
     );
 
     if (userInfoCookie) {
@@ -49,6 +50,8 @@ console.log(addCard,"addcard");
   const [collectionTitle, setCollectionTitle] = useState("");
   const [loading, setLoading] = useState<any>(false);
 const [brandKeys,setBrandKeys]=useState("")
+const [selectedImage, setSelectedImage] = useState<any | null>(null);
+const [addSelectedImage, setAddSelectedImage] = useState<any | null> (null);
 const gettoken = Cookies.get("auth_token"); 
   // State to store other form data
   const [formData, setFormData] = useState({
@@ -101,9 +104,8 @@ const gettoken = Cookies.get("auth_token");
       // file: "",
     };
     console.log(item, "item");
-
     try {
-      setLoading(true);
+      setLoading(true)
       const response = await fetch(
         "https://magshopify.goaideme.com/razorpay/create-link",
         {
@@ -123,7 +125,7 @@ const gettoken = Cookies.get("auth_token");
       }
 
       const data = await response.json(); // Assuming the response returns JSON
-      toast.success("Added Successfully");
+      toast.success("Added Successfully", {autoClose:2000});
       console.log(data, "sadfdgsfdg");
       router.replace(`/share/${data?.data?.uuid}?brandKey=${brandKeys}`);
     } catch (error) {
@@ -143,8 +145,7 @@ const gettoken = Cookies.get("auth_token");
   //     }
   // }
   // const check=data.data.brands.map((res:any)=>console.log(res.imageUrls.80w-326ppi,"iooo"))
-  const [selectedImage, setSelectedImage] = useState<any | null>(null);
-  const [addSelectedImage, setAddSelectedImage] = useState<any | null> (null);
+ 
   const handleImageClick = (imageData: any) => {
     setSelectedImage(imageData);
     console.log(imageData,"imageData");
@@ -157,7 +158,8 @@ const gettoken = Cookies.get("auth_token");
   //   setIsModalOpen(false);
   // };
   const handleBackClick = () => {
-    setSelectedImage(null); // Reset the selected image to show the image grid again
+    setSelectedImage(null);
+    setBrandKeys("") // Reset the selected image to show the image grid again
   };
   const AddGiftCard = () => {
     setAddCard(selectedImage.brandKey); // Reset the selected image to show the image grid again
@@ -247,8 +249,11 @@ const selectGiftImage = selectedImage?.imageUrls["278w-326ppi"];
             the card.
           </p>
           <button
-            className="text-red-600 hover:text-red-800 font-medium"
-            onClick={() => setAddSelectedImage(null)}
+            className="text-[#FF0000] hover:text-red-800 font-medium"
+            onClick={() => {
+              setAddSelectedImage(null);
+              setBrandKeys("")
+            }}
           >
             Remove Gift Card
           </button>
@@ -257,13 +262,21 @@ const selectGiftImage = selectedImage?.imageUrls["278w-326ppi"];
           </div>
           {/* <Link href={`/share/1`}> */}
           {accessToken?
-          <button
-            //   disabled={setLoading}
+          <>
+            <button
+              // disabled={setLoading}
             type="submit"
-            className="w-full bg-blue-600 text-black border-2 border-blue-700 py-3 rounded-md hover:bg-blue-700 transition duration-300"
+            disabled={!brandKeys}
+            className="w-full bg-blue-600 cursor-not-allowed text-black border-2 border-blue-700 py-3 rounded-md hover:bg-blue-700 transition duration-300"
           >
             Continue
           </button>
+            {
+              !brandKeys && <span className="text-center ml-24">**Please select gift card**</span>
+            }
+          
+          </>
+
           :
           <Link href={`/login`}>
           <button

@@ -39,9 +39,10 @@ const CollectionFilter = () => {
                     value={urlValue1}
                     onChange={handleChange}
                 >
-                    <option value="">Popularity</option>
+                    <option value="">All</option>
+                    <option value="popular">Popularity</option>
                     <option value="trending">Trending</option>
-                    <option value="latest">New</option>
+                    <option value="new">New</option>
                 </select>
             </div>
         </div>
