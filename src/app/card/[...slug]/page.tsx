@@ -15,7 +15,9 @@ import { Api } from "@/interfaces/interfaces";
 const data = await fetchFromServer(api);
 console.log(data.data, "sdasdfgdfg");
     return (
-      <div><CardCollection params={params} /></div>
+      <div>
+        <CardCollection params={params} />  
+        </div>
     )
   }
   

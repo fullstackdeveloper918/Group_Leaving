@@ -60,7 +60,9 @@ Quill.register(Font, true);
     ];
 
   useEffect(() => {
-    const storedElements = localStorage.getItem("slideElements");
+    const storedElements:any = localStorage.getItem("slideElements");
+    console.log(JSON.parse(storedElements),"iopiopo");
+    
     if (storedElements) {
       setElements(JSON.parse(storedElements));
     }

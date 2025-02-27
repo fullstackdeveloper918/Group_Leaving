@@ -36,15 +36,11 @@ const CardCollection = async ({ params }: any) => {
   console.log("finalSearchQuery",finalSearchQuery)
 
   // All cards: Fetch cards based on search and category params
-  const api2 = {
-    url: `https://magshopify.goaideme.com/card/card-listing?search=${encodeURIComponent(finalSearchQuery)}&category=${encodeURIComponent(collectionType)}`,
-    method: "GET",
-  };
-
-  const response = await fetchFromServer(api2);
+  let response = await fetch(`https://magshopify.goaideme.com/card/card-listing?search=${encodeURIComponent(finalSearchQuery)}&category=${encodeURIComponent(collectionType)}`, { cache: 'no-store' });
+  let response1 = await response.json();
   console.log(type, "type");
   console.log(searchQuery, "searchQuery");
-  console.log(response, "Card Listing Response");
+  console.log(response1, "Card Listing Response");
 
   return (
     <div className=" bg-lightBg py-12">
@@ -63,7 +59,7 @@ const CardCollection = async ({ params }: any) => {
 
             {/* Cards Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-2 lg:grid-cols-4 gap-6 min_gap">
-              {response?.listing?.map((card: any) => (
+              {response1?.listing?.map((card: any) => (
                 <Card item={card} index={card.id} key={card.id} />
               ))}
             </div>

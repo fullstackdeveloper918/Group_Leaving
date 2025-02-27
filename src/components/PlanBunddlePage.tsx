@@ -17,7 +17,7 @@ const PlanBunddlePage = ({ data2 }: any) => {
   };
      const gettoken = Cookies.get("auth_token");   
 
-     const TotalAmount = (data2?.data[0]?.sale_price - voucherDiscount).toFixed(2);
+     const TotalAmount = (data2.data[0].sale_price - voucherDiscount).toFixed(2);
   console.log(TotalAmount, "TotalAmount");
 
   const { accessToken, setAccessToken } = useAccessToken();
@@ -63,13 +63,14 @@ const PlanBunddlePage = ({ data2 }: any) => {
               setVaoucherDiscount(numberValue)
               // console.log("voucher discount", voucherDiscount);
               if(res.status===200){
-                toast.success("Voucher Added Suceesfully")
+                toast.success("Voucher Added Suceesfully", {autoClose:2000})
               }else if(posts?.statusCode === 401){
                 Cookies.remove("auth_token");
-                router.push("/login");
+                router.replace("/login");
+                window.location.reload();
               }
         } catch (error:any) {
-          toast.error("Voucher is not found");
+          toast.error("Voucher is not found", {autoClose:3000});
         }
       }; 
 
@@ -78,7 +79,7 @@ const PlanBunddlePage = ({ data2 }: any) => {
       <ToastContainer />
       <div className="bg-white p-6 rounded-[20px] hover:shadow-lg transition-all  border border-[#e5e7eb] flex flex-col justify-between h-full">
         <h1 className="text-center text-2xl font-bold mb-4">
-          {data2?.data[0]?.number_of_cards} Cards Bundle
+          {data2.data[0].number_of_cards} Cards Bundle
         </h1>
 
         <div className="bg-gray-50 p-5 rounded-lg border border-gray-200">
@@ -96,10 +97,10 @@ const PlanBunddlePage = ({ data2 }: any) => {
             </div>
             <div className="ml-4">
               <h3 className="text-base font-semibold">
-                {data2?.data[0]?.number_of_cards} Cards Bundle
+                {data2.data[0].number_of_cards} Cards Bundle
               </h3>
               <p className="text-sm text-gray-500">
-                {data2?.data[0]?.number_of_cards} cards
+                {data2.data[0].number_of_cards} cards
               </p>
             </div>
           </div>

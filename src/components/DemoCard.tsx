@@ -15,6 +15,7 @@ import Image from "next/image";
 import Custom from "./common/custom";
 import Customcraousal from "./common/Customcraousal";
 import { zIndex } from "html2canvas/dist/types/css/property-descriptors/z-index";
+import MySignatures from "./common/MySignatures";
 const { Paragraph, Text } = Typography;
 const DemoCard = ({ params }: any) => {
   const [show, setShow] = useState<any>(false);
@@ -54,6 +55,7 @@ const DemoCard = ({ params }: any) => {
   ];
 
   const totalAmount = contributors.reduce((sum, c) => sum + c.amount, 0);
+  
   return (
     <>
       {params === "fwzDVjvbQ_X" ? (
@@ -118,6 +120,7 @@ const DemoCard = ({ params }: any) => {
                   {/* <EditorModal/> */}
                 </div>
                 <div className="md:w-1/2 w-full md:mt-0 mt-5">
+                <MySignatures/>
                   <div className="bg-white shadow-lg rounded-lg p-10 w-full max-w-lg flex flex-col gap-2 items-center">
                     <h3 className="text-center text-md font-normal ">
                       Gift Card Collection Pot
