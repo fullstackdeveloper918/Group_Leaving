@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import upload_img from "../assets/images/upload_img.png";
 import upload_gif from "../assets/images/upload_gif.png";
 import EditorModal from "./common/EditorModal";
@@ -55,7 +55,24 @@ const DemoCard = ({ params }: any) => {
   ];
 
   const totalAmount = contributors.reduce((sum, c) => sum + c.amount, 0);
+  const [elements, setElements] = useState<any[]>([]);
+
+  // Step 1: Retrieve from localStorage on component mount
+  useEffect(() => {
+    const storedElements = localStorage.getItem("slideElements");
+
+    if (storedElements) {
+      setElements(JSON.parse(storedElements));
+    }
+  }, []);
   
+    // useEffect(() => {
+    //   if (elements.length > 0) {
+    //     localStorage.setItem("slideElements", JSON.stringify(elements));
+    //   }
+    // }, [elements]);
+    console.log(elements,"sdasdqweqw");
+    
   return (
     <>
       {params === "fwzDVjvbQ_X" ? (
@@ -119,7 +136,7 @@ const DemoCard = ({ params }: any) => {
                   {/* <Carousel /> */}
                   {/* <EditorModal/> */}
                 </div>
-                <div className="md:w-1/2 w-full md:mt-0 mt-5">
+                <div className="md:w-1/2 w-full md:mt-0 mt-5  flex items-center justify-center flex-col">
                 <MySignatures/>
                   <div className="bg-white shadow-lg rounded-lg p-10 w-full max-w-lg flex flex-col gap-2 items-center">
                     <h3 className="text-center text-md font-normal ">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useDrag } from "@use-gesture/react";
 import { useSpring, animated } from "@react-spring/web";
@@ -12,6 +12,15 @@ import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import Quill from 'quill';
 import Draggable from 'react-draggable';
+import { Progress } from "../ui/progress";
+interface Slide {
+  id: string;
+  title: string;
+  subtitle: string;
+  text: string;
+  link: string;
+  card_img:string
+}
 
 const Custom: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -61,7 +70,7 @@ Quill.register(Font, true);
 
   useEffect(() => {
     const storedElements:any = localStorage.getItem("slideElements");
-    console.log(JSON.parse(storedElements),"iopiopo");
+    console.log(JSON.parse(storedElements),"sdafasd");
     
     if (storedElements) {
       setElements(JSON.parse(storedElements));
@@ -238,7 +247,68 @@ Quill.register(Font, true);
 
     pdf.save("slides_with_positions.pdf");
   };
+  const slides: Slide[] = [
 
+    // "https://groupleavingcards.com/assets/design/617318f94c962c605abdeabb.jpg",
+    // "https://groupleavingcards.com/assets/design/66bd382d51e4bce9bdd31fc6_sm.avif",
+    // "https://groupleavingcards.com/assets/design/66e30136ffa5cb04d55d990e_sm.avif",
+    // "https://groupleavingcards.com/assets/design/6734d2bbe8c991dba26a0288_sm.webp",
+    // "https://groupleavingcards.com/assets/design/66967675b0d2b479aa568c98_sm.avif",
+    // "https://groupleavingcards.com/assets/design/66d88499b4fb75024aa2d8de_sm.avif",
+    {
+      id: "slide-1",
+      title: "Development",
+      subtitle: "SCSS Only Slider",
+      text: "Learn to create a SCSS-only responsive slider.",
+      link: "https://blog.significa.pt/css-only-slider-71727effff0b",
+      card_img:"https://groupleavingcards.com/assets/design/617318f94c962c605abdeabb.jpg"
+    },
+    {
+      id: "slide-2",
+      title: "Web Design",
+      subtitle: "Creative Animations",
+      text: "Explore modern web design techniques.",
+      link: "https://medium.com/web-design",
+      card_img:"https://groupleavingcards.com/assets/design/66bd382d51e4bce9bdd31fc6_sm.avif"
+    },
+    {
+      id: "slide-3",
+      title: "JavaScript",
+      subtitle: "Advanced ES6 Features",
+      text: "Master JavaScript ES6+ features in depth.",
+      link: "https://javascript.info/",
+      card_img:"https://groupleavingcards.com/assets/design/66e30136ffa5cb04d55d990e_sm.avif"
+    },
+    {
+      id: "slide-4",
+      title: "React",
+      subtitle: "State Management",
+      text: "A guide to managing state effectively in React.",
+      link: "https://reactjs.org/docs/hooks-intro.html",
+      card_img: "https://groupleavingcards.com/assets/design/66967675b0d2b479aa568c98_sm.avif",
+    },
+    {
+      id: "slide-5",
+      title: "Next.js",
+      subtitle: "Optimizing Performance",
+      text: "Learn Next.js best practices for fast web apps.",
+      link: "https://nextjs.org/docs/advanced-features",
+      card_img:"https://groupleavingcards.com/assets/design/66d88499b4fb75024aa2d8de_sm.avif",
+    },
+  ];
+
+  const [activeSlide, setActiveSlide] = useState<number>(2); // Default to slide-3
+  const totalSlides = slides.length;
+
+  console.log(totalSlides, "totalSlides");
+  const progress = ((activeSlide + 1) / totalSlides) * 100;
+
+  const handleSlideChange = useCallback((index: number) => {
+    console.log(index,"index")
+    setActiveSlide(index);
+  }, []);
+
+  console.log(progress, "progress");
   return (
     <div style={styles.container}>
       <div className="editor_option" style={{marginBottom:"15px"}} >
@@ -365,8 +435,86 @@ Quill.register(Font, true);
         // </Draggable>
       )}
 
+<section className="main-slider-section">
+        <section className="section slider">
+          {/* Radio Buttons */}
+          {slides.map((slide, index) => (
+            <input
+              key={slide.id}
+              type="radio"
+              name="slider"
+              id={slide.id}
+              className="slider__radio"
+              checked={activeSlide === index}
+              onChange={() => handleSlideChange(index)}
+            />
+          ))}
 
-      <div className="swiperSlider">
+          {/* Slides */}
+          <div className="slider__holder">
+            {slides.map((slide, index) =>{
+
+
+                console.log(activeSlide , slide.id,"id gete")
+          return(
+              <>
+                <label
+                  key={slide.id}
+                  htmlFor={slide.id}
+                //   id="slider-item"
+              
+                  className={`slider__item slider__item--${index + 1} card`}
+                >
+                  {`slide-${activeSlide + 1}` !== slide.id && <div className="hover-bg"></div>}
+
+                  <div className="slider__item-content">
+                  <img
+                  src={slide.card_img}
+                  alt={`slide-${index}`}
+                  style={{ width: "100%", height: "500px", background: "white" }}
+                />
+                    {/* <p className="heading-3 heading-3--light">{slide.title}</p>
+                    <p className="heading-3">{slide.subtitle}</p>
+                    <p className="slider__item-text serif">{slide.text}</p>
+                    <a
+                      className="heading-3 link"
+                      href={slide.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Read More
+                    </a> */}
+                  </div>
+                </label>
+
+                {elements
+                  .filter((el) => el.slideIndex === index + 1)
+                  .map((el, i) => (
+                    <DraggableElement
+                      key={i}
+                      content={el.content}
+                      type={el.type}
+                      index={i}
+                      setElements={setElements}
+                      initialX={el.x || 0}
+                      initialY={el.y || 0}
+                    />
+                  ))}
+              </>
+            )})}
+          </div>
+        </section>
+        {/* Progress Bar */}
+        <div className="space-y-2 progress-bar">
+          <Progress value={progress} className="h-2" />
+          <div className="page-no">
+            Page {activeSlide + 1} of {totalSlides}
+          </div>
+        </div>
+      </section>
+
+
+      {/* <div className="swiperSlider">
         <Swiper
           spaceBetween={30}
           slidesPerView={3}
@@ -410,7 +558,7 @@ Quill.register(Font, true);
             </SwiperSlide>
           ))}
         </Swiper>
-      </div>
+      </div> */}
 
       <Modal
         isOpen={isOpen}
@@ -428,8 +576,7 @@ Quill.register(Font, true);
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-blue-600 text-black border rounded-md hover:bg-blue-700 transition"
-          >       
+            className="px-4 py-2 bg-blue-600 text-black border rounded-md hover:bg-blue-700 transition" >       
             Search
           </button>
         </form>
@@ -527,9 +674,10 @@ const DraggableElement = ({
 
 const styles = {
   container: {
-    padding: "20px",
+    overflow:"hidden",
+    // padding: "20px",
     fontFamily: "Helvetica, Arial, sans-serif",
-    backgroundColor: "#eee",
+    // backgroundColor: "#eee",
     minHeight: "100vh",
     gap: "10px"
   } as React.CSSProperties,

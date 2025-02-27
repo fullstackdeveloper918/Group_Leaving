@@ -22,6 +22,8 @@ export default function MySignatures() {
  
   useEffect(() => {
     const storedElements = localStorage.getItem("slideElements");
+    console.log(typeof storedElements, 'asdfasdfasdf')
+
     if (storedElements) {
       setElements(JSON.parse(storedElements));
     }
@@ -42,12 +44,12 @@ export default function MySignatures() {
   };
   
   return (
-    <div className="w-80 bg-white shadow-md rounded-lg">
+    <div className="w-80 bg-white shadow-md rounded-lg ">
       <div className="flex items-center justify-between p-4 cursor-pointer" onClick={() => setOpen(!open)}>
         <div className="flex items-center space-x-2">
           <div className="relative">
             <FaComment className="text-gray-600" />
-            <span className="absolute -top-2 -left-2 bg-blue-600 text-white text-xs font-semibold px-1.5 py-0.5 rounded-full">{elements.length}</span>
+            <span className="absolute -top-2 -left-2 bg-blue-600 text-white bg-[#061178] text-xs font-semibold px-1.5 py-0.5 rounded-full">{elements.length}</span>
           </div>
           <span className="font-semibold">My signatures</span>
         </div>
@@ -67,7 +69,9 @@ export default function MySignatures() {
                 <FaComment className="text-gray-600" />
               )}
               <div className="ml-3 flex-1">
-                <p className="font-medium text-sm">{item.type.charAt(0).toUpperCase() + item.type.slice(1)}</p>
+                {item.type === 'text'?
+                <p className="font-medium text-sm"  dangerouslySetInnerHTML={{__html: item.content}}></p>:
+                <p className="font-medium text-sm">{item.type === 'text'?item.content:item.type.charAt(0).toUpperCase() + item.type.slice(1)}</p>}
                 <p className="text-xs text-gray-500">Page {item.slideIndex}</p>
               </div>
               <FaTrash className="text-gray-500 hover:text-red-500 cursor-pointer" onClick={() => handleDelete(index)} />

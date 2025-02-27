@@ -1,46 +1,57 @@
 "use server";
-import { parseCookies } from "nookies";
+import { cookies } from "next/headers";
 import { Api } from "../../interfaces/interfaces";
-
 export async function fetchFromServer(api: Api): Promise<any> {
   const { url, method, body = null } = api;
-  const cookies = parseCookies();
-  console.log(cookies, "Cookies");
-  
-  const accessToken = cookies.auth_token;
-  console.log(accessToken, "Access Token");
-  
+  // :white_tick: Correct way to get the token in Next.js
+  const getToken = cookies().get("auth_token")?.value || "";
+  console.log(getToken, "Access Token");
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate", // Strong cache control
-    "Pragma": "no-cache",  // Older HTTP/1.0 caches
-    "Expires": "0",        // Expiry set to '0' to disable caching
+    "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
+    "Pragma": "no-cache",
+    "Expires": "0",
   };
-
-  // Force cache-busting by appending a unique query parameter (timestamp)
-  const cacheBustedUrl = `${url}?t=${new Date().getTime()}`;
-
+  if (getToken) {
+    headers["Authorization"] = `Bearer ${getToken}`;
+  }
   const options: RequestInit = {
     method,
     headers,
-    cache: "no-store", // Disable cache for sensitive requests
+    cache: "no-store",
   };
-
   if (body) {
     options.body = JSON.stringify(body);
   }
-
   try {
-    const res = await fetch(cacheBustedUrl, options);
-
+    const res = await fetch(url, options);
+    if (res.status === 401) {
+      console.error("Token expired, logging out...");
+      // :white_tick: Correct way to delete the cookie in a server action
+      cookies().delete("auth_token");
+      // :white_tick: Return a special error response (client should handle redirect)
+      return { error: "Token expired", redirect: "/login" };
+    }
     if (!res.ok) {
       throw new Error(`Failed to fetch: ${res.status}`);
     }
-
-    const data = await res.json();
-    return data;
+    return await res.json();
   } catch (error) {
     console.error("Fetch Error:", error);
-    throw error;
+    return { error: "An error occurred while fetching data" };
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -13,6 +13,8 @@ import cardData from "../constants/CardJson/card.json";
 import Link from "next/link";
 import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
+import { useParams, useSearchParams } from "next/navigation";
+import { useRouter } from "next/router";
 const categoriesName = [
   "Farewell",
   "Birthday",
@@ -28,37 +30,33 @@ const categoriesName = [
   "New Home",
 ];
 const Hero = ({ token,userData, ...cardData }: { token?: any; userData?:any; data?: any[] }) => {
-  // console.log(userData, "props"); // ✅ Corrected console.log
-
+  // console.log(userData, "props"); // :white_tick: Corrected console.log
   console.log("tokendata",token)
   const [isNewLogin, setIsNewLogin] = useState(false);
   const [displayedText, setDisplayedText] = useState("");
   const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
-  const [categoryName, setCategoryName] = useState(cardData?.data?.[0] || ""); // ✅ Avoid undefined error
-
-
-
-
+  const [categoryName, setCategoryName] = useState(cardData?.data?.[0] || ""); // :white_tick: Avoid undefined error
+  // const searchParams = useSearchParams();
+  // useEffect(()=>{
+    // const tokenFromUrl = searchParams.get("token");
+    // console.log("tokenFromUrla:", searchParams);
+  //   console.log("object")
+  // },[])
   useEffect(() => {
     const storedToken = Cookies.get("auth_token");
-
-    if (token && token !== storedToken) {
+    if (token && !storedToken) {
       Cookies.set("auth_token", token);
       Cookies.set("user_info",userData)
-      setIsNewLogin(true); 
+      setIsNewLogin(true);
     }
   }, [token]);
-
   useEffect(() => {
     if (isNewLogin) {
       toast.success("Login Successfully!", { autoClose: 1000 });
-      setIsNewLogin(false); 
+      setIsNewLogin(false);
     }
   }, [isNewLogin]);
-
- 
-
   useEffect(() => {
     const typeWriter = (text: string, index: number) => {
       if (index < text.length) {
@@ -73,7 +71,6 @@ const Hero = ({ token,userData, ...cardData }: { token?: any; userData?:any; dat
         }, 1500);
       }
     };
-
     if (isTyping) {
       setCategoryName(categoriesName[currentCategoryIndex]);
       typeWriter(categoriesName[currentCategoryIndex], 0);
@@ -95,11 +92,8 @@ const Hero = ({ token,userData, ...cardData }: { token?: any; userData?:any; dat
     <Slider {...settings}>
       {/********** slide 1 started  ***********/}
       <div className="relative bg-hero_banner_new bg-cover slider_onebg-cover bg-no-repeat  heroSectionHeight">
-          
           <img src={banner_flower.src} className="banner_flower" />
-         
             <div className="container-fluid  py-6 mx-auto  xl:gap-0 lg:py-14  space-y-10 items-center">
-             
               <img src={banner_card.src} className="card_img_left" />
               <div className=" mx-auto text-center w-full md:text-center xs:text-center lg:text-left ">
                 <h1 className="bannerHeaderH1 text-center  mx-auto">
@@ -131,8 +125,6 @@ const Hero = ({ token,userData, ...cardData }: { token?: any; userData?:any; dat
               <img src={banner_flower.src} className="banner_flower_right" />
           </div>
           {/************ slide 1 ended ************/}
-  
-  
           {/************ slide 2 started ************/}
           <div className="relative bg-hero_banner_two bg-cover bg-no-repeat  banner_slider_two heroSectionHeight">
             <div className="container-fluid  py-6 mx-auto  xl:gap-0 lg:py-14  space-y-10 items-center">
@@ -154,8 +146,6 @@ const Hero = ({ token,userData, ...cardData }: { token?: any; userData?:any; dat
             </div>
           </div>
           {/************ slide 2 ended ************/}
-  
-  
           {/************ slide 3 ended ************/}
            <div className="relative bg-hero_banner_three slider_three bg-cover bg-no-repeat  heroSectionHeight">
             <div className="container-fluid  py-6 mx-auto  xl:gap-0 lg:py-14  space-y-10 items-center">
@@ -167,11 +157,10 @@ const Hero = ({ token,userData, ...cardData }: { token?: any; userData?:any; dat
               </div>
               <img src={banner_card.src} className="card_img_right" />
             </div>
-          </div> 
+          </div>
           {/************ slide 3 ended ************/}
     </Slider>
   </div>
-       
       </section>
     </>
   );

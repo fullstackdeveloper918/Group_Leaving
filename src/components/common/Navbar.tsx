@@ -17,6 +17,7 @@ import Cookies from "js-cookie";
 const Navbar = () => {
   const router = useRouter();
   const param = useParams()
+
   console.log("paramsss",param)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,6 +30,25 @@ const Navbar = () => {
   
 
   console.log("accessTokenn",accessToken)
+
+  useEffect(() => {
+    let token = "";
+  if (typeof param.auth === "string") {
+    // Extract token after 'token%3D'
+    token = param.auth.split("token%3D")[1] || param.auth;
+  } else if (Array.isArray(param.auth)) {
+    // If param.auth is an array, take the first element
+    token = param.auth[0]?.split("token%3D")[1] || param.auth[0];
+  }
+    const storedToken = Cookies.get("auth_token");
+    if (token && !storedToken) {
+      Cookies.set("auth_token", token);
+      router.replace("/")
+      // Cookies.set("user_info",userData)
+      // setIsNewLogin(true);
+    }
+    console.log("tokenbyme",token)
+  }, []);
 
   useEffect(()=>{
     const token :any = Cookies.get("auth_token");
